@@ -1,8 +1,5 @@
 # OSXKeyboard
-Go helper to detect the global keypress events on OSX
-
-__IMPORTANT: this project is a work in progress DO NOT USE IT!__
-
+Go helper to detect the global keypress events on OSX, it requires the root permissions enabled
 
 # Installation
 

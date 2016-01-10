@@ -10,19 +10,19 @@ const UniChar *chars;
 CFStringRef CFStringFromCGKeyCode(CGKeyCode keyCode) {
     // get the keyboard layout
     TISInputSourceRef currentKeyboard = TISCopyCurrentKeyboardLayoutInputSource();
-    CFDataRef layoutData = TISGetInputSourceProperty(
-                            currentKeyboard,
-                            kTISPropertyUnicodeKeyLayoutData
-                           );
+    CFDataRef         layoutData      = TISGetInputSourceProperty(
+                                          currentKeyboard,
+                                          kTISPropertyUnicodeKeyLayoutData
+                                        );
 
     const UCKeyboardLayout *keyboardLayout = (
                                               const UCKeyboardLayout *)
                                               CFDataGetBytePtr(layoutData
                                              );
     // helper variables
-    UInt32 keysDown = 0;
-    UniChar chars[4];
-    UniCharCount realLength;
+    UInt32        keysDown    = 0;
+    UniChar       chars[4];
+    UniCharCount  realLength;
 
     UCKeyTranslate(
       keyboardLayout,
@@ -50,7 +50,7 @@ char * charCopyFromCFString(CFStringRef aString) {
     return NULL;
 
   // get the string properties
-  CFIndex length = CFStringGetLength(aString);
+  CFIndex length  = CFStringGetLength(aString);
   CFIndex maxSize = CFStringGetMaximumSizeForEncoding(
                       length,
                       kCFStringEncodingUTF8
@@ -85,13 +85,12 @@ CGEventRef onKeyPress(
 
 
   // The incoming keycode.
-  CGKeyCode keycode = (CGKeyCode) CGEventGetIntegerValueField(
+  CGKeyCode   keycode = (CGKeyCode) CGEventGetIntegerValueField(
                                     event,
                                     kCGKeyboardEventKeycode
                                   );
-
-  CFStringRef str = CFStringFromCGKeyCode(keycode);
-  char * utf8Str = charCopyFromCFString(str);
+  CFStringRef str     = CFStringFromCGKeyCode(keycode);
+  char *      utf8Str = charCopyFromCFString(str);
 
   // go callback hook
   GoKeypressCallback(utf8Str);

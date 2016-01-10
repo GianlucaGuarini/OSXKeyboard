@@ -1,4 +1,4 @@
-package MGK
+package OSXKeyboard
 
 import (
   "testing"

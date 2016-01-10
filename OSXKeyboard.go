@@ -1,4 +1,4 @@
-package MGK
+package OSXKeyboard
 
 /*
 #cgo LDFLAGS: -framework ApplicationServices -framework Carbon

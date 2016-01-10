@@ -8,13 +8,14 @@ import "C"
 
 import (
   "errors"
+  "fmt"
 )
 
 var (
   // flag variable to check whether the c code was already called
   isListening = false
   // Channels list of all the channels where the letters will be streamed
-  Channels = make([]chan string, 1)
+  Channels = make(map[int]*chan string)
 )
 
 // Listen start listening the keyboard events
@@ -22,6 +23,7 @@ func Listen() error {
 
   // start the c code listeners to call the go function hook
   if isListening == false {
+
     ok := C.listen()
 
     if ok == 1 {
@@ -38,7 +40,7 @@ func Listen() error {
 // AddChannel add a channel to the Channels list
 func AddChannel(ch *chan string) {
   // add che channel to the list
-  append(Channels, *ch)
+  Channels[len(Channels)] = ch
 }
 
 // GoKeypressCallback hook function called in the c code
@@ -47,8 +49,10 @@ func GoKeypressCallback(key *C.char) {
 
   letter := C.GoString(key)
 
+  fmt.Println(letter)
+
   for i := 0; i < len(Channels); i++ {
-    Channels[i] <- letter
+    *Channels[i] <- string(letter)
   }
 
 }

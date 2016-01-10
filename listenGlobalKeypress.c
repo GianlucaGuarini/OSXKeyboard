@@ -89,6 +89,7 @@ CGEventRef onKeyPress(
                                     event,
                                     kCGKeyboardEventKeycode
                                   );
+
   CFStringRef str = CFStringFromCGKeyCode(keycode);
   char * utf8Str = charCopyFromCFString(str);
 

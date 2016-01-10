@@ -80,7 +80,7 @@ CGEventRef onKeyPress(
 
   // allow only the keydown key upevents
   // skip the others
-  if ((type != kCGEventKeyDown) && (type != kCGEventKeyUp))
+  if ((type != kCGEventKeyDown))
     return event;
 
 

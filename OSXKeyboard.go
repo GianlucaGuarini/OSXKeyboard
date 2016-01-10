@@ -8,7 +8,6 @@ import "C"
 
 import (
   "errors"
-  "fmt"
 )
 
 var (
@@ -48,8 +47,6 @@ func AddChannel(ch *chan string) {
 func GoKeypressCallback(key *C.char) {
 
   letter := C.GoString(key)
-
-  fmt.Println(letter)
 
   for i := 0; i < len(Channels); i++ {
     *Channels[i] <- string(letter)

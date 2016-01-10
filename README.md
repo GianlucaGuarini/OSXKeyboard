@@ -34,11 +34,9 @@ import (
 func main() {
 
   var wg sync.WaitGroup
-
   ch := make(chan string)
 
   OSXKeyboard.Subscribe(&ch)
-
   go OSXKeyboard.Listen()
 
   for {

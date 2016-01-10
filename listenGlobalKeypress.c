@@ -102,6 +102,7 @@ CGEventRef onKeyPress(
 
 }
 
+// this function will be called in go
 int listen() {
   CFMachPortRef      eventTap;
   CGEventMask        eventMask;

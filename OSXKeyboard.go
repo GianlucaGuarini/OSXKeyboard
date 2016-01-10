@@ -9,7 +9,6 @@ import "C"
 import (
   "container/list"
   "errors"
-  "os"
 )
 
 var (
@@ -44,10 +43,13 @@ func AddChannel(ch *chan string) {
 }
 
 // GoKeypressCallback hook function called in the c code
-// export GoKeypressCallback
+//export GoKeypressCallback
 func GoKeypressCallback(key *C.char) {
+
   letter := C.GoString(key)
-  for ch := Channels.Front(); ch != nil; ch = item.Next() {
-    ch <- letter
+
+  for item := Channels.Front(); item != nil; item = item.Next() {
+    item.Value.(chan string) <- letter
   }
+
 }

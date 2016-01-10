@@ -18,11 +18,11 @@ Call it once to start listening the global keyboard events
 
 ## Subscribe(ch *chan string)
 
-Subscribe a channel receiveing the keyboard letters on any keypress
+Subscribe a channel receiving the keyboard letters on any keypress
 
 # Usage
 
-Build the following file from your `go/src` foler and then run it with `sudo`
+Build the following file from your `go/src` folder and then run it with `sudo`
 
 ```go
 
@@ -37,6 +37,7 @@ import (
 func main() {
 
   var wg sync.WaitGroup
+
   ch := make(chan string)
 
   OSXKeyboard.Subscribe(&ch)

@@ -7,7 +7,6 @@ extern int listen();
 import "C"
 
 import (
-  "container/list"
   "errors"
 )
 
@@ -15,7 +14,7 @@ var (
   // flag variable to check whether the c code was already called
   isListening = false
   // Channels list of all the channels where the letters will be streamed
-  Channels = list.New()
+  Channels = make([]chan string, 1)
 )
 
 // Listen start listening the keyboard events
@@ -39,7 +38,7 @@ func Listen() error {
 // AddChannel add a channel to the Channels list
 func AddChannel(ch *chan string) {
   // add che channel to the list
-  Channels.PushFront(ch)
+  append(Channels, *ch)
 }
 
 // GoKeypressCallback hook function called in the c code
@@ -48,8 +47,8 @@ func GoKeypressCallback(key *C.char) {
 
   letter := C.GoString(key)
 
-  for item := Channels.Front(); item != nil; item = item.Next() {
-    item.Value.(chan string) <- letter
+  for i := 0; i < len(Channels); i++ {
+    Channels[i] <- letter
   }
 
 }

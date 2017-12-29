@@ -3,55 +3,6 @@
 #include <Carbon/Carbon.h>
 #include "_cgo_export.h"
 
-// return the CFStringRef from the keycode pressed
-CFStringRef CFStringFromCGKeyCode(CGKeyCode keyCode) {
-    // get the keyboard layout
-    TISInputSourceRef currentKeyboard = TISCopyCurrentKeyboardLayoutInputSource();
-    CFDataRef layoutData = TISGetInputSourceProperty(currentKeyboard, kTISPropertyUnicodeKeyLayoutData);
-    const UCKeyboardLayout *keyboardLayout = (const UCKeyboardLayout *) CFDataGetBytePtr(layoutData);
-
-    // helper variables
-    UInt32 keysDown = 0;
-    UniChar chars[4];
-    UniCharCount realLength;
-
-    UCKeyTranslate(
-      keyboardLayout,
-      keyCode,
-      kUCKeyActionDisplay,
-      0,
-      LMGetKbdType(),
-      kUCKeyTranslateNoDeadKeysBit,
-      &keysDown,
-      sizeof(chars) / sizeof(chars[0]),
-      &realLength,
-      chars
-    );
-
-    // free the memory allocated for the currentKeyboard variable
-    CFRelease(currentKeyboard);
-
-    return CFStringCreateWithCharacters(kCFAllocatorDefault, chars, 1);
-}
-
-char * charCopyFromCFString(CFStringRef aString) {
-  // make sure to receive always a valid string
-  if (aString == NULL) return NULL;
-
-  // get the string properties
-  CFIndex length  = CFStringGetLength(aString);
-  CFIndex maxSize = CFStringGetMaximumSizeForEncoding(length, kCFStringEncodingUTF8) + 1;
-
-  // allocate memory to store the char
-  // it will be freed afterwards in the onKeyPress function
-  char *buffer = (char *) malloc(maxSize);
-
-  // return the string pointer
-  if (CFStringGetCString(aString, buffer, maxSize, kCFStringEncodingUTF8)) return buffer;
-
-  return NULL;
-}
-
 // detect the special keys
 char * specialChar(CGKeyCode keycode) {
   switch (keycode) {
@@ -91,7 +42,6 @@ char * specialChar(CGKeyCode keycode) {
   }
 }
 
-
 /**
  * Callback function called whenever there is a keypress event
  */
@@ -106,26 +56,29 @@ CGEventRef onKeyPress(
   // skip the others
   if (type != kCGEventKeyDown) return event;
 
-  // The incoming keycode.
+  // get the incoming keycode.
   CGKeyCode keycode = (CGKeyCode) CGEventGetIntegerValueField(event, kCGKeyboardEventKeycode);
-  CFStringRef str;
+
+  // check if it's a special key
   char * utf8Str = specialChar(keycode);
 
+  // get eventually the key pressed
   if (utf8Str == NULL) {
-    str = CFStringFromCGKeyCode(keycode);
-    utf8Str = charCopyFromCFString(str);
+    UniChar chars[1];
+    UniCharCount maxStringLength = sizeof(chars);
+    UniCharCount realLength;
+
+    CGEventKeyboardGetUnicodeString(event, maxStringLength, &realLength, &chars[0]);
+    utf8Str = (char *) chars;
   }
 
   // go callback hook
   GoKeypressCallback(utf8Str);
 
-  // free the memory allocation
-  if (utf8Str == NULL) free(utf8Str);
-
   return event;
 }
 
-// this function will be called in go
+// this function will be eventually called in go
 int listen() {
   CFMachPortRef      eventTap;
   CGEventMask        eventMask;
@@ -159,5 +112,4 @@ int listen() {
   CFRunLoopRun();
 
   return 0;
-
 }

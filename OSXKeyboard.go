@@ -1,7 +1,7 @@
 package OSXKeyboard
 
 /*
-#cgo LDFLAGS: -framework ApplicationServices -framework Carbon
+#cgo LDFLAGS: -framework Carbon
 extern int listen();
 */
 import "C"

@@ -13,42 +13,33 @@ go get github.com/GianlucaGuarini/OSXKeyboard
 
 Call it once to start listening the global keyboard events
 
-## Subscribe(ch *chan string)
+## Subscribe(interface {})
 
-Subscribe a channel receiving the keyboard letters on any keypress
+Subscribe to the keypress events receiving the letter pressed as string
+
+## Unsubscribe(interface {})
+
+Unsubscribe a specific callback to the keypress events
 
 # Usage
 
 Build the following file from your `go/src` folder and then run it with `sudo`
 
 ```go
-
 package main
 
 import (
   "fmt"
   "github.com/GianlucaGuarini/OSXKeyboard"
-  "sync"
 )
 
 func main() {
-
-  var wg sync.WaitGroup
-  ch := make(chan string)
-
-  OSXKeyboard.Subscribe(&ch)
   go OSXKeyboard.Listen()
 
-  for {
-    select {
-    case letter, _ := <-ch:
-      fmt.Println(letter)
-    }
-  }
+  OSXKeyboard.Subscribe(func(letter string) {
+    fmt.Println(letter)
+  })
 
-  wg.Wait()
-
+  select {} // block forever
 }
-
-
 ```
